@@ -1,0 +1,6 @@
+.env
+JOB_APPLICATION_MASTER.md
+portfolio-ai/
+portfolio-backend/
+portfolio-frontend/
+*.log
