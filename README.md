@@ -15,9 +15,9 @@ The application directories remain independent Git repositories. This repository
 
 ## Setup
 
-1. Copy `.env.example` to `.env`.
-2. Set `GROQ_API_KEY` in the root `.env`.
-3. Configure the Supabase JDBC values in `portfolio-backend/.env`.
+1. Copy `portfolio-ai/.env.example` to `portfolio-ai/.env`.
+2. Set `GROQ_API_KEY` in `portfolio-ai/.env`.
+3. Configure the Supabase JDBC values and `GITHUB_API_TOKEN` in `portfolio-backend/.env`.
 4. Start the development stack:
 
    ```bash
@@ -43,3 +43,5 @@ docker compose down
 ```
 
 Dependency caches live in Docker named volumes, not in this repository.
+
+The AI container receives the private job master through a read-only bind mount. GitHub metadata and README retrieval is owned by the Java backend; Python consumes only the backend's sanitized knowledge feed.
