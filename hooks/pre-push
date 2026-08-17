@@ -1,0 +1,41 @@
+#!/bin/bash
+# Pre-push hook: run tests before pushing (monorepo root)
+
+echo "🧪 Running tests before push..."
+
+# Run backend tests
+if [ -d "portfolio-backend" ] && [ -f "portfolio-backend/pom.xml" ]; then
+    echo "  → Testing portfolio-backend..."
+    cd portfolio-backend
+    ./mvnw verify -q
+    RESULT=$?
+    cd ..
+    if [ $RESULT -ne 0 ]; then
+        echo "❌ portfolio-backend tests failed! Push aborted."
+        exit 1
+    fi
+fi
+
+# Run AI tests (if pytest available)
+if [ -d "portfolio-ai" ] && [ -f "portfolio-ai/requirements.txt" ]; then
+    echo "  → Testing portfolio-ai..."
+    cd portfolio-ai
+    if command -v python3 &> /dev/null && python3 -c "import pytest" 2>/dev/null; then
+        python3 -m pytest tests/ -v
+        RESULT=$?
+    elif command -v .venv/bin/python &> /dev/null && .venv/bin/python -c "import pytest" 2>/dev/null; then
+        .venv/bin/python -m pytest tests/ -v
+        RESULT=$?
+    else
+        echo "  ⚠️  pytest not available, skipping portfolio-ai tests"
+        RESULT=0
+    fi
+    cd ..
+    if [ $RESULT -ne 0 ]; then
+        echo "❌ portfolio-ai tests failed! Push aborted."
+        exit 1
+    fi
+fi
+
+echo "✅ All tests passed!"
+exit 0
